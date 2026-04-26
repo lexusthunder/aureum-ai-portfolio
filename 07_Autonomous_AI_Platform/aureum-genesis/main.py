@@ -9,8 +9,13 @@ from __future__ import annotations
 import argparse
 import asyncio
 import logging
+import os
 import sys
 from typing import Final
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from core.agent_runtime import AgentRunContext
 from core.cost_tracker import CostTracker

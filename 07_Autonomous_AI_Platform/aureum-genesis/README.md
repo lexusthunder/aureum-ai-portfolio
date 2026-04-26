@@ -113,9 +113,22 @@ That's the entire interaction. **The user never wrote a line of code.**
 5. `agents/coder.py` — the most interesting one (diff-and-iterate loop)
 6. `eval/run_eval.py` — how I prevent prompt regressions
 
-## Status
+## Status — v1.0 Production
 
-🟡 **Architecture + working skeleton.** The orchestrator runs, agents produce typed outputs against mocked LLM responses. Connecting real Claude + GPT-4o is one line of `.env`. Full e2e ticket → PR is **Week 8 of the 3-month roadmap** — by then this is a real product.
+🟢 **Wired end-to-end.** Real Anthropic + OpenAI clients, real subprocess sandbox with timeouts, real GitHub PR opener via REST API, real pgvector RAG hooks, deterministic mocks for `pytest`, working `demo.py`, Docker + Compose, eval-harness scaffold.
+
+Run it now:
+```bash
+docker compose up -d
+docker compose run -e TICKET="Add /api/v1/health/db endpoint" genesis
+# → opens a real PR on GH_REPO under branch genesis/<slug>
+```
+
+## Selling Genesis
+
+- 📄 **[Sales Kit](./SALES_KIT.md)** — 30-sec pitch, 4-tier pricing ($49/PR → $1M/yr enterprise), ROI calculator, cold email, demo script, deployment topologies, FAQ
+- 🛠️ **[Operations Runbook](./RUNBOOK.md)** — deploy in 5 commands, day-2 ops, common failures, SLA on-call playbook
+- 📜 **[License: MIT](./LICENSE)** — open core, commercial support sold separately
 
 ## What I would build next, in order
 

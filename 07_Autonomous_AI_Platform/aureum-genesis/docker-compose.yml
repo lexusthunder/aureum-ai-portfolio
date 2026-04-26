@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: ankane/pgvector:latest
+    environment:
+      POSTGRES_DB: aureum_genesis
+      POSTGRES_USER: genesis
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-genesis}
+    ports: ["5432:5432"]
+    volumes:
+      - genesis_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U genesis"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  genesis:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://genesis:${POSTGRES_PASSWORD:-genesis}@postgres:5432/aureum_genesis
+    volumes:
+      - ./workspace:/workspace
+    working_dir: /workspace
+    # Run a single ticket; mount /workspace with the customer repo before invoking
+    command: ["--ticket", "${TICKET:-Refactor logging to use structured JSON}"]
+
+volumes:
+  genesis_pg:
