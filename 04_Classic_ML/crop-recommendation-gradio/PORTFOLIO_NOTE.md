@@ -36,6 +36,12 @@ N=90, P=42, K=43, temperature=20.9°C, humidity=82%, ph=6.5, rainfall=202mm
 2. `gradio_app.py` — UI definition + inference
 3. `Crop_recommendation.csv` — the dataset
 
-## Roadmap
+## 🚀 Live demo
 
-🟡 **Working locally.** Deploy to **Hugging Face Spaces** Week 4 — gives portfolio a live demo URL recruiters can click.
+**[Try it now: huggingface.co/spaces/alexai888/crop-recommendation](https://huggingface.co/spaces/alexai888/crop-recommendation)**
+
+Click the link, slide the 7 sensor values, get the predicted crop + confidence + top-3 alternatives. No clone required.
+
+## Status
+
+✅ **Deployed.** RandomForest trained on cold start, served via Gradio on HF Spaces (CPU Basic, free tier).
