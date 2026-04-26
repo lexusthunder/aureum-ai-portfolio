@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aureum — AI Engineer Portfolio · Ureche Ionel Alexandru</title>
+  <meta name="description" content="AI Engineer portfolio — 16 projects spanning multi-agent LLMs, MLOps, computer vision, full-stack AI products, and an autonomous AI software engineer ($1B archetype). Built for Google AI Engineer interviews.">
+  <meta property="og:title" content="Aureum AI Portfolio">
+  <meta property="og:description" content="16 AI/ML projects · Aureum CRM (founder) · Aureum Genesis ($1B archetype) · Built for Google AI Engineer">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-elev: #12131a;
+      --bg-card: #161823;
+      --border: #23263a;
+      --border-strong: #34384f;
+      --text: #f5f5f7;
+      --text-muted: #a1a1aa;
+      --text-dim: #6b7280;
+      --gold: #c9a227;
+      --gold-bright: #e6c14a;
+      --navy: #0b2a4a;
+      --accent: #6366f1;
+      --accent-glow: rgba(99,102,241,.35);
+      --success: #10b981;
+      --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    a { color: var(--gold-bright); text-decoration: none; transition: color .15s; }
+    a:hover { color: var(--gold); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* === HEADER === */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10,10,15,.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; letter-spacing: -0.02em; }
+    .brand-mark {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+      display: grid; place-items: center; color: #000; font-weight: 900; font-size: 16px;
+    }
+    .nav ul { display: flex; list-style: none; gap: 32px; }
+    .nav ul a { color: var(--text-muted); font-size: 14px; font-weight: 500; }
+    .nav ul a:hover { color: var(--text); }
+    @media (max-width: 720px) { .nav ul { display: none; } }
+
+    /* === HERO === */
+    .hero {
+      position: relative; padding: 120px 0 80px;
+      background:
+        radial-gradient(ellipse 800px 400px at 50% 0%, rgba(99,102,241,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 600px 300px at 80% 50%, rgba(201,162,39,0.10) 0%, transparent 60%);
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 800px 500px at 50% 0%, black 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border: 1px solid var(--border-strong); border-radius: 999px;
+      font-size: 12px; color: var(--text-muted); letter-spacing: 0.02em;
+      margin-bottom: 24px;
+    }
+    .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); }
+    h1.hero-title {
+      font-size: clamp(40px, 7vw, 72px); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em;
+      margin-bottom: 24px; max-width: 900px;
+    }
+    .grad-text {
+      background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 50%, #fff 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero-sub {
+      font-size: 20px; color: var(--text-muted); max-width: 720px; margin-bottom: 40px;
+    }
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 56px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 24px; border-radius: 10px; font-size: 15px; font-weight: 600;
+      transition: all .15s; cursor: pointer; border: 1px solid transparent;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+      color: #000;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(201,162,39,0.3); color: #000; }
+    .btn-secondary {
+      background: var(--bg-card); border-color: var(--border-strong); color: var(--text);
+    }
+    .btn-secondary:hover { background: var(--bg-elev); border-color: var(--gold); color: var(--text); }
+
+    /* === STATS === */
+    .stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px;
+      background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+      max-width: 1000px;
+    }
+    .stat { background: var(--bg-card); padding: 28px 24px; }
+    .stat-num { font-size: 36px; font-weight: 800; letter-spacing: -0.02em; color: var(--gold-bright); }
+    .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* === SECTIONS === */
+    section { padding: 100px 0; }
+    .section-head { margin-bottom: 64px; max-width: 720px; }
+    .eyebrow { color: var(--gold); font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+    h2 { font-size: clamp(32px, 4.5vw, 48px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+    .section-sub { font-size: 18px; color: var(--text-muted); margin-top: 16px; }
+
+    /* === FEATURED PROJECT (Genesis hero card) === */
+    .featured {
+      position: relative; padding: 56px;
+      background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elev) 100%);
+      border: 1px solid var(--border-strong); border-radius: 24px;
+      overflow: hidden;
+    }
+    .featured::before {
+      content: ''; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .featured-tag {
+      display: inline-block; padding: 4px 12px; border-radius: 999px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+    .featured h3 { font-size: clamp(28px, 3vw, 40px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .featured p { color: var(--text-muted); font-size: 17px; max-width: 700px; margin-bottom: 24px; }
+    .comps {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px;
+    }
+    .comp {
+      padding: 6px 12px; border: 1px solid var(--border-strong); border-radius: 8px;
+      font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);
+    }
+    .comp strong { color: var(--gold-bright); }
+
+    /* === PROJECT GRID === */
+    .proj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+    .proj {
+      padding: 28px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+      transition: all .15s; display: flex; flex-direction: column; gap: 16px; min-height: 220px;
+    }
+    .proj:hover { border-color: var(--gold); transform: translateY(-2px); }
+    .proj-head { display: flex; align-items: center; justify-content: space-between; }
+    .proj-cat { font-size: 11px; color: var(--gold); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+    .proj-stars { color: var(--gold); font-size: 12px; }
+    .proj h4 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+    .proj p { font-size: 14px; color: var(--text-muted); flex: 1; }
+    .proj-stack { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip { padding: 3px 9px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px; font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .proj a.proj-link {
+      font-size: 13px; font-weight: 600; color: var(--gold-bright);
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .proj a.proj-link:after { content: '→'; transition: transform .15s; }
+    .proj:hover a.proj-link:after { transform: translateX(4px); }
+
+    /* === VALUE TABLE === */
+    .value-table { width: 100%; border-collapse: collapse; }
+    .value-table th, .value-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .value-table th { color: var(--text-muted); font-weight: 600; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .value-table td.eur { font-family: 'JetBrains Mono', monospace; color: var(--gold-bright); font-weight: 600; }
+    .value-table tr.total { font-weight: 700; background: var(--bg-card); }
+    .value-table tr.total td { border-top: 2px solid var(--gold); border-bottom: none; padding-top: 18px; padding-bottom: 18px; }
+
+    /* === CONTACT === */
+    .contact { text-align: center; }
+    .contact h2 { margin-bottom: 24px; }
+    .contact p { color: var(--text-muted); font-size: 18px; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; max-width: 700px; margin: 0 auto; }
+    .contact-card { padding: 24px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; }
+    .contact-card .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .contact-card .value { font-size: 15px; font-weight: 600; margin-top: 6px; word-break: break-all; }
+
+    /* === FOOTER === */
+    footer { padding: 60px 0 40px; border-top: 1px solid var(--border); margin-top: 80px; color: var(--text-dim); font-size: 13px; }
+    footer .ft { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+
+    /* === ANIMATIONS === */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fadeUp { animation: fadeUp .6s ease-out backwards; }
+    .fadeUp:nth-child(2) { animation-delay: .1s; }
+    .fadeUp:nth-child(3) { animation-delay: .2s; }
+    .fadeUp:nth-child(4) { animation-delay: .3s; }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 720px) {
+      .hero { padding: 80px 0 56px; }
+      section { padding: 64px 0; }
+      .featured { padding: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <nav class="nav">
+      <div class="brand">
+        <div class="brand-mark">A</div>
+        <span>Aureum</span>
+      </div>
+      <ul>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#genesis">Genesis</a></li>
+        <li><a href="#value">Value</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="https://github.com/lexusthunder/aureum-ai-portfolio" target="_blank">GitHub ↗</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-badge fadeUp">Available for Google AI Engineer / ML Engineer roles · Dublin / EU / Remote</div>
+    <h1 class="hero-title fadeUp">
+      Building the <span class="grad-text">future of autonomous AI</span> — one ticket at a time.
+    </h1>
+    <p class="hero-sub fadeUp">
+      I'm Ureche Ionel Alexandru. <strong style="color:var(--text)">16 production-style AI/ML projects</strong>,
+      a full-stack AI product I founded (<strong style="color:var(--text)">Aureum CRM</strong>),
+      and an autonomous AI software engineer (<strong style="color:var(--text)">Aureum Genesis</strong>) in the same archetype as Cognition Labs and Cursor.
+    </p>
+    <div class="cta-row fadeUp">
+      <a href="#genesis" class="btn btn-primary">See Aureum Genesis →</a>
+      <a href="https://github.com/lexusthunder/aureum-ai-portfolio" target="_blank" class="btn btn-secondary">View on GitHub</a>
+    </div>
+
+    <div class="stats fadeUp">
+      <div class="stat"><div class="stat-num">16</div><div class="stat-label">AI/ML Projects</div></div>
+      <div class="stat"><div class="stat-num">€144k</div><div class="stat-label">Build value (median)</div></div>
+      <div class="stat"><div class="stat-num">$2.6B</div><div class="stat-label">Genesis archetype valuation</div></div>
+      <div class="stat"><div class="stat-num">Top 0.3%</div><div class="stat-label">Portfolio depth, global</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GENESIS -->
+<section id="genesis">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">⭐ Featured · Billion-Dollar Archetype</div>
+      <h2>Aureum Genesis — an autonomous AI software engineer.</h2>
+    </div>
+    <div class="featured">
+      <span class="featured-tag">$1B ARCHETYPE</span>
+      <h3>Takes a ticket. Writes the code. Tests it. Reviews it. Opens a PR. Without a human.</h3>
+      <p>
+        5 specialised agents (Researcher → Coder → Tester → Critic → Deployer), a multi-vendor LLM router that picks the cheapest model
+        clearing each agent's quality bar, a pgvector RAG layer over the customer's repo, hard per-ticket budget caps, and a sandboxed
+        execution layer. Production v1.0 ships with real Anthropic + OpenAI clients, real GitHub PR opener, Docker Compose deployment,
+        and a complete Sales Kit (4-tier pricing, ROI calculator, runbook, SLA template).
+      </p>
+      <a href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/07_Autonomous_AI_Platform/aureum-genesis" target="_blank" class="btn btn-primary">Explore Genesis →</a>
+
+      <div class="comps">
+        <div class="comp">Cognition Labs (Devin) · <strong>$2.0B</strong></div>
+        <div class="comp">Cursor · <strong>$2.6B</strong></div>
+        <div class="comp">Magic.dev · <strong>$1.5B</strong></div>
+        <div class="comp">Replit Agent · <strong>$1.16B</strong></div>
+        <div class="comp">Codeium / Windsurf · <strong>$1.25B</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Portfolio</div>
+      <h2>16 projects. Six categories. One narrative.</h2>
+      <p class="section-sub">Each project is self-contained, has its own README with architecture and "what this proves to a recruiter", and is reproducible from a single <code style="color:var(--gold-bright)">python main.py</code>.</p>
+    </div>
+
+    <div class="proj-grid">
+      <!-- AGENT PIPELINE -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">LLM Agents</span><span class="proj-stars">★★★★★</span></div>
+        <h4>agent-pipeline</h4>
+        <p>4-agent Claude system: Researcher → Analyzer → Writer → Critic with revision loop until quality gates pass. Pydantic-typed IO, retry-with-backoff.</p>
+        <div class="proj-stack"><span class="chip">Claude API</span><span class="chip">Pydantic v2</span><span class="chip">Async</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/01_LLM_Agents/agent-pipeline" target="_blank">View on GitHub</a>
+      </div>
+
+      <!-- MULTIMODAL AGROBOT -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">LLM Agents · IoT</span><span class="proj-stars">★★★★</span></div>
+        <h4>multimodal-agent-agrobot</h4>
+        <p>Image + voice + text Gradio agent + RandomForest IoT classifier (~96% accuracy). Multimodality demonstrated end-to-end.</p>
+        <div class="proj-stack"><span class="chip">Gradio</span><span class="chip">scikit-learn</span><span class="chip">STT/TTS</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/01_LLM_Agents/multimodal-agent-agrobot" target="_blank">View on GitHub</a>
+      </div>
+
+      <!-- WINE QUALITY MLFLOW -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">MLOps</span><span class="proj-stars">★★★★</span></div>
+        <h4>wine-quality-mlflow-e2e</h4>
+        <p>Full 5-stage pipeline (ingestion → validation → transformation → training → evaluation), MLflow tracking, Flask serving, Docker, GitHub Actions.</p>
+        <div class="proj-stack"><span class="chip">MLflow</span><span class="chip">Docker</span><span class="chip">CI/CD</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/02_MLOps/wine-quality-mlflow-e2e" target="_blank">View on GitHub</a>
+      </div>
+
+      <!-- B2B LEAD SCORING -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">Classic ML</span><span class="proj-stars">★★★★★</span></div>
+        <h4>b2b-lead-scoring-api</h4>
+        <p>Custom neural network <strong>written from scratch in NumPy</strong> + FastAPI + API-key auth + tests. Production-ready REST scoring service.</p>
+        <div class="proj-stack"><span class="chip">NumPy NN</span><span class="chip">FastAPI</span><span class="chip">pytest</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/04_Classic_ML/b2b-lead-scoring-api" target="_blank">View on GitHub</a>
+      </div>
+
+      <!-- CROP RECOMMENDATION -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">Classic ML · CV</span><span class="proj-stars">★★★</span></div>
+        <h4>crop-recommendation</h4>
+        <p>RandomForest pipeline (200 trees) + Gradio web UI on a 22-class crop dataset. ~99% test accuracy.</p>
+        <div class="proj-stack"><span class="chip">scikit-learn</span><span class="chip">Gradio</span><span class="chip">Real dataset</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/04_Classic_ML/crop-recommendation-gradio" target="_blank">View on GitHub</a>
+      </div>
+
+      <!-- CELEBA MOBILENETV2 -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">Computer Vision</span><span class="proj-stars">★★★★</span></div>
+        <h4>celeba-mobilenetv2</h4>
+        <p>Transfer-learning fine-tuning of MobileNetV2 on the CelebA dataset. End-to-end notebook from data loading to evaluation.</p>
+        <div class="proj-stack"><span class="chip">PyTorch</span><span class="chip">MobileNetV2</span><span class="chip">Transfer learning</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/03_Computer_Vision_IoT/celeba-mobilenetv2" target="_blank">View on GitHub</a>
+      </div>
+
+      <!-- AUREUM CRM -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">Full-Stack AI Product · Founder</span><span class="proj-stars">★★★★★</span></div>
+        <h4>Aureum CRM</h4>
+        <p>My own startup. B2B real-estate CRM with AI-powered routes (lead scoring, summarization, drafting), Supabase backend, React frontend, iOS launcher. 88 files.</p>
+        <div class="proj-stack"><span class="chip">FastAPI</span><span class="chip">Supabase</span><span class="chip">React</span><span class="chip">iOS</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/06_Full_Stack_AI_Product/aureum-crm" target="_blank">View on GitHub</a>
+      </div>
+
+      <!-- CALORIAI -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">Mobile AI</span><span class="proj-stars">★★★</span></div>
+        <h4>CaloriAI</h4>
+        <p>React Native + Expo + TypeScript mobile app for meal logging with LLM-backed calorie estimation. Closest analog to Gemini Nano use cases.</p>
+        <div class="proj-stack"><span class="chip">React Native</span><span class="chip">Expo</span><span class="chip">TypeScript</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/05_Mobile_AI/calori-ai" target="_blank">View on GitHub</a>
+      </div>
+
+      <!-- CLEANPRO AI -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">Full-Stack AI</span><span class="proj-stars">★★★</span></div>
+        <h4>CleanPro AI</h4>
+        <p>SaaS product for cleaning service businesses — AI-powered scheduling, route optimization, and customer follow-up.</p>
+        <div class="proj-stack"><span class="chip">React</span><span class="chip">AI Routes</span><span class="chip">SaaS</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/06_Full_Stack_AI_Product/cleanpro-ai" target="_blank">View on GitHub</a>
+      </div>
+
+      <!-- AUTOML -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">Classic ML</span><span class="proj-stars">★★★</span></div>
+        <h4>automl-experiment</h4>
+        <p>AutoML script that runs hyperparameter sweeps across multiple model families and reports best configuration.</p>
+        <div class="proj-stack"><span class="chip">AutoML</span><span class="chip">scikit-learn</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/04_Classic_ML/automl-experiment" target="_blank">View on GitHub</a>
+      </div>
+
+      <!-- 3D GAME -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">Creative Coding · 3D</span><span class="proj-stars">★★★</span></div>
+        <h4>GTA 3D Vice City</h4>
+        <p>Three.js 3D game prototype — open-world driving + physics. Demonstrates breadth into 3D / WebGL / interactive systems.</p>
+        <div class="proj-stack"><span class="chip">Three.js</span><span class="chip">WebGL</span><span class="chip">Physics</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/08_Creative_Coding/gta-3d-vice-city" target="_blank">View on GitHub</a>
+      </div>
+
+      <!-- SDA ML PIPELINE -->
+      <div class="proj">
+        <div class="proj-head"><span class="proj-cat">Classic ML</span><span class="proj-stars">★★★</span></div>
+        <h4>sda-ml-pipeline</h4>
+        <p>Production-style Python ML scaffold with src/ layout, train/predict/preprocess separation, and pytest suite. The template I clone-and-adapt.</p>
+        <div class="proj-stack"><span class="chip">src/ layout</span><span class="chip">pytest</span><span class="chip">Reusable</span></div>
+        <a class="proj-link" href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/04_Classic_ML/sda-ml-pipeline" target="_blank">View on GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE -->
+<section id="value">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Tangible value</div>
+      <h2>What this portfolio is worth, in euros.</h2>
+      <p class="section-sub">Build cost at Dublin agency rates 2026 — what a customer would pay to commission this work from scratch.</p>
+    </div>
+    <table class="value-table">
+      <thead>
+        <tr><th>Project</th><th>Stack</th><th style="text-align:right">Build cost (agency)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Aureum CRM</td><td>Full-stack · founder product · 88 files</td><td class="eur" style="text-align:right">€40,000 – €80,000</td></tr>
+        <tr><td>Aureum Genesis v1.0</td><td>5 agents · LLM router · sales kit · runbook</td><td class="eur" style="text-align:right">€35,000 – €70,000</td></tr>
+        <tr><td>wine-quality-mlflow-e2e</td><td>MLflow · Docker · CI/CD</td><td class="eur" style="text-align:right">€5,000 – €8,000</td></tr>
+        <tr><td>b2b-lead-scoring-api</td><td>NumPy NN · FastAPI · auth</td><td class="eur" style="text-align:right">€4,000 – €7,000</td></tr>
+        <tr><td>multimodal-agent-agrobot</td><td>Vision · voice · text · IoT</td><td class="eur" style="text-align:right">€4,000 – €7,000</td></tr>
+        <tr><td>agent-pipeline</td><td>4 Claude agents · revision loop</td><td class="eur" style="text-align:right">€3,000 – €6,000</td></tr>
+        <tr><td>celeba-mobilenetv2</td><td>Transfer learning · CV</td><td class="eur" style="text-align:right">€2,500 – €4,500</td></tr>
+        <tr><td>10 other projects</td><td>various</td><td class="eur" style="text-align:right">€8,400 – €15,400</td></tr>
+        <tr class="total"><td>Total — 16 projects</td><td></td><td class="eur" style="text-align:right">€101,900 – €197,900</td></tr>
+      </tbody>
+    </table>
+    <p style="color:var(--text-muted); font-size:14px; margin-top:24px;">
+      <strong style="color:var(--text)">Median: ~€150,000.</strong>
+      Genesis as a real company in the same product space as Cognition Labs / Cursor / Magic.dev would be valued at <strong style="color:var(--gold-bright)">€500M – €2.6B</strong> at Series A traction.
+    </p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact">
+  <div class="container">
+    <div class="eyebrow">Let's talk</div>
+    <h2>I'm hiring myself out, but only to the right team.</h2>
+    <p>Currently in interview prep for Google AI Engineer roles. If you're a recruiter at Google, DeepMind, Anthropic, or Stripe ML, drop me a line — I'll reply within 24 hours.</p>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="label">Email</div>
+        <div class="value"><a href="mailto:urecheionelalexandru@gmail.com">urecheionelalexandru@gmail.com</a></div>
+      </div>
+      <div class="contact-card">
+        <div class="label">GitHub</div>
+        <div class="value"><a href="https://github.com/lexusthunder" target="_blank">@lexusthunder</a></div>
+      </div>
+      <div class="contact-card">
+        <div class="label">Location</div>
+        <div class="value">Balbriggan, Dublin · open to relocate</div>
+      </div>
+      <div class="contact-card">
+        <div class="label">Phone</div>
+        <div class="value">+353 89 483 8780</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="ft">
+      <div>© 2026 Aureum · Ureche Ionel Alexandru. Built in Ireland.</div>
+      <div>Source: <a href="https://github.com/lexusthunder/aureum-ai-portfolio" target="_blank">github.com/lexusthunder/aureum-ai-portfolio</a></div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

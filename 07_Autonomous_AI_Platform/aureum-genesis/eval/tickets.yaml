@@ -1,0 +1,76 @@
+# Frozen evaluation tickets — Genesis must pass these before any prompt change ships.
+# Each ticket has a golden plan + minimum quality bar. Run with:
+#     python eval/run_eval.py --against main --max-budget 5
+
+tickets:
+  - id: T001
+    name: add-health-db-endpoint
+    difficulty: easy
+    ticket: |
+      Add a GET /api/v1/health/db endpoint to the FastAPI app.
+      Should return 200 if a `SELECT 1` against the configured Postgres works,
+      503 with body `{"reason": str}` otherwise. Add 3 tests.
+    expected:
+      touched_files: ["app/main.py"]
+      new_files: ["tests/test_health_db.py"]
+      min_quality_score: 8
+      max_budget_usd: 0.50
+
+  - id: T002
+    name: rate-limit-login
+    difficulty: medium
+    ticket: |
+      Add rate limiting to POST /auth/login: 5 requests / 60s / IP.
+      Return 429 with Retry-After header. Use SlowAPI.
+      Tests must cover: under limit OK, over limit blocked, header present.
+    expected:
+      touched_files: ["app/main.py", "app/middleware.py"]
+      new_files: ["tests/test_rate_limit.py"]
+      min_quality_score: 8
+      max_budget_usd: 0.80
+
+  - id: T003
+    name: refactor-logging-json
+    difficulty: medium
+    ticket: |
+      Replace print() and logger.info(str) calls in app/ with structured JSON logging
+      using `structlog`. Every log line must include: timestamp, level, request_id, msg.
+      Do not change application behaviour. Update README "Logging" section.
+    expected:
+      touched_files_min: 3
+      min_quality_score: 8
+      max_budget_usd: 1.00
+
+  - id: T004
+    name: pagination-on-leads
+    difficulty: medium
+    ticket: |
+      GET /api/v1/leads currently returns the full list. Add cursor-based pagination
+      (?cursor=<id>&limit=N, max N=100). Response must include `next_cursor` (or null).
+      Add OpenAPI examples and tests covering: first page, mid page, last page.
+    expected:
+      touched_files: ["app/routers/leads.py"]
+      new_files: ["tests/test_leads_pagination.py"]
+      min_quality_score: 9
+      max_budget_usd: 1.00
+
+  - id: T005
+    name: optimize-n-plus-1
+    difficulty: hard
+    ticket: |
+      The /api/v1/properties endpoint has an N+1 query: each property loads its agent in a separate query.
+      Refactor to use a single JOIN (or `selectinload` if SQLAlchemy is in use).
+      Add a regression test that asserts query count <= 2 using `sqlalchemy.event` listener.
+      Keep the response schema identical.
+    expected:
+      touched_files: ["app/routers/properties.py", "app/models/property.py"]
+      new_files: ["tests/test_properties_perf.py"]
+      min_quality_score: 9
+      max_budget_usd: 1.50
+      min_perf_improvement: "5x query count reduction"
+
+# Acceptance criteria for an eval run:
+#   - 50 of 50 tickets succeed (Tester passes + Critic >= min_quality_score)
+#   - Total cost <= sum(max_budget_usd) * 1.1
+#   - No ticket exceeds its individual max_budget
+# A regression on any ticket BLOCKS the prompt-change PR via CI.
