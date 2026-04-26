@@ -46,6 +46,7 @@ This repository is a curated, production-style portfolio that demonstrates bread
 | 04 | [sda-ml-pipeline](./04_Classic_ML/sda-ml-pipeline) | src/ layout · pytest | Production-style Python ML scaffold |
 | 05 | [calori-ai](./05_Mobile_AI/calori-ai) | React Native · Expo · TypeScript | Mobile AI app for nutrition tracking |
 | 06 | [aureum-crm](./06_Full_Stack_AI_Product/aureum-crm) | FastAPI · Supabase · iOS · AI routes | Full-stack AI-powered B2B product (own startup) |
+| 07 | [aureum-genesis](./07_Autonomous_AI_Platform/aureum-genesis) ⭐ **$1B archetype** | 5 agents · LLM router · pgvector RAG · cost tracker · OTel | Autonomous AI software engineer — same space as Cognition Labs ($2B), Cursor ($2.6B) |
 
 ## Highlight: Aureum CRM
 
