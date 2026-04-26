@@ -1,6 +1,7 @@
 # Aureum AI Portfolio
 
-[![🚀 Live Demo on Hugging Face](https://img.shields.io/badge/🚀_Live_Demo-Crop_Recommendation_AI-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/spaces/alexai888/crop-recommendation)
+[![🚧 Live Demo on Hugging Face](https://img.shields.io/badge/🚧_Live_Demo-Crop_Recommendation_(building)-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/spaces/alexai888/crop-recommendation)
+[![GitHub](https://img.shields.io/badge/Owner-lexusthunder-181717?style=for-the-badge&logo=github)](https://github.com/lexusthunder) [![13 projects](https://img.shields.io/badge/Projects-13_AI/ML-success?style=for-the-badge)](https://github.com/lexusthunder/aureum-ai-portfolio)
 
 ![Python](https://img.shields.io/badge/python-3.11-blue?logo=python) ![Claude](https://img.shields.io/badge/LLM-Claude_API-D97757) ![FastAPI](https://img.shields.io/badge/FastAPI-Pydantic_v2-009688?logo=fastapi) ![MLflow](https://img.shields.io/badge/MLOps-MLflow-0194E2) ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker) ![Gradio](https://img.shields.io/badge/Gradio-UI-orange?logo=gradio) ![React_Native](https://img.shields.io/badge/React_Native-Expo-61DAFB?logo=react) ![Status](https://img.shields.io/badge/status-Active_Development-success)
 
@@ -41,7 +42,7 @@ This repository is a curated, production-style portfolio that demonstrates bread
 | 04 | [cinemacritic-ai](./04_Classic_ML/cinemacritic-ai) | scikit-learn · pyproject | Clean Python packaging + ML scaffold |
 | 04 | [agricultural-ml](./04_Classic_ML/agricultural-ml) | scikit-learn · Jupyter | Crop / yield ML model |
 | 04 | [b2b-lead-scoring-api](./04_Classic_ML/b2b-lead-scoring-api) | **NumPy NN from scratch** · FastAPI · pytest | Custom neural network + production REST API + auth |
-| 04 | [crop-recommendation-gradio](./04_Classic_ML/crop-recommendation-gradio) 🚀 [LIVE](https://huggingface.co/spaces/alexai888/crop-recommendation) | scikit-learn · Gradio · real dataset | RandomForest + Gradio web UI — **deployed on HF Spaces** |
+| 04 | [crop-recommendation-gradio](./04_Classic_ML/crop-recommendation-gradio) 🚧 [HF Space](https://huggingface.co/spaces/alexai888/crop-recommendation) | scikit-learn · Gradio · real dataset | RandomForest + Gradio web UI — Space deploying on HF |
 | 04 | [sda-ml-pipeline](./04_Classic_ML/sda-ml-pipeline) | src/ layout · pytest | Production-style Python ML scaffold |
 | 05 | [calori-ai](./05_Mobile_AI/calori-ai) | React Native · Expo · TypeScript | Mobile AI app for nutrition tracking |
 | 06 | [aureum-crm](./06_Full_Stack_AI_Product/aureum-crm) | FastAPI · Supabase · iOS · AI routes | Full-stack AI-powered B2B product (own startup) |
