@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The eval harness is the product — Aureum Blog</title>
+<meta name="description" content="Without frozen tickets and golden outputs, prompt engineering becomes superstition. Here's the eval harness behind Aureum Genesis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../post.css">
+</head>
+<body>
+<div class="mesh"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+<nav class="nav"><div class="container nav-inner">
+  <a href="/aureum-ai-portfolio/" class="brand"><span class="logo">A</span><span>Aureum</span></a>
+  <div class="nav-links">
+    <a href="/aureum-ai-portfolio/">Portfolio</a>
+    <a href="/aureum-ai-portfolio/blog/">Blog</a>
+    <a href="https://github.com/lexusthunder/aureum-ai-portfolio" target="_blank">GitHub ↗</a>
+  </div>
+</div></nav>
+
+<article>
+  <div class="container">
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="date">Apr 30, 2026</span>
+        <span class="tag">MLOps</span>
+        <span class="tag">Genesis</span>
+        <span>· 7 min read</span>
+      </div>
+      <h1>The eval harness is the product</h1>
+      <p class="dek">Without frozen tickets + golden outputs, prompt engineering becomes superstition. I run 50 tickets on every PR. Here's exactly what to put in yours.</p>
+    </header>
+
+    <div class="post-body">
+      <p>Every AI engineering team I've talked to has the same workflow:</p>
+      <ol>
+        <li>Engineer changes a prompt</li>
+        <li>Engineer eyeballs five outputs</li>
+        <li>"Looks better" → ship</li>
+        <li>Three days later: a customer hits a regression</li>
+        <li>Engineer goes back, eyeballs five different outputs, ships again</li>
+      </ol>
+      <p>This isn't engineering. It's <strong>tarot reading with a model behind it</strong>.</p>
+
+      <h2>What an eval harness actually is</h2>
+      <p>It's a <strong>locked set of inputs</strong> + <strong>scoring function</strong> that runs on every prompt change and refuses to let regressions ship.</p>
+      <p>For Aureum Genesis, my harness has 5 starter tickets (publicly visible) and 50 in production. Each ticket has:</p>
+      <ul>
+        <li>A natural-language ticket text — <strong>frozen forever</strong></li>
+        <li>Expected file paths touched + new files created</li>
+        <li>A minimum quality score (8/10 for medium, 9/10 for hard)</li>
+        <li>A maximum budget cap (so a runaway agent can't cheat the test)</li>
+      </ul>
+      <p>The runner produces a JSON report. CI exits non-zero if any ticket regresses. The PR is blocked. <strong>No exceptions.</strong></p>
+
+      <h2>Anatomy of one ticket</h2>
+      <pre><code>- id: T005
+  name: optimize-n-plus-1
+  difficulty: hard
+  ticket: |
+    The /api/v1/properties endpoint has an N+1 query: each property
+    loads its agent in a separate query. Refactor to use a single JOIN.
+    Add a regression test that asserts query count <= 2.
+    Keep the response schema identical.
+  expected:
+    touched_files: ["app/routers/properties.py", "app/models/property.py"]
+    new_files: ["tests/test_properties_perf.py"]
+    min_quality_score: 9
+    max_budget_usd: 1.50
+    min_perf_improvement: "5x query count reduction"</code></pre>
+
+      <p>Notice what's <em>not</em> here: the ticket doesn't tell Genesis <em>how</em> to fix the N+1. It states the constraint (≤ 2 queries), the deliverable (a regression test), and the perf improvement (5×). The agent has to figure out the rest. That's the test.</p>
+
+      <h2>Why this is the product, not "tooling"</h2>
+      <p>Three reasons.</p>
+
+      <h3>1. It's the only thing that makes prompt iteration safe</h3>
+      <p>I changed the routing table 14 times this month. Each change <em>could</em> have regressed quality. The only reason I felt safe was: <code>python eval/run_eval.py</code> on every PR. 47/50 → keep iterating. 39/50 → revert.</p>
+
+      <h3>2. It's how I sell on-prem to enterprise</h3>
+      <p>An enterprise buyer doesn't ask "is your prompt good?". They ask "can you prove the prompt won't regress?". The answer is the eval harness, not philosophy. I show them the suite, the CI integration, the badge. Conversation flips from "trust me" to "look at the proof".</p>
+
+      <h3>3. It's the input to the next moat</h3>
+      <p>Once you have 1000 frozen tickets that Genesis passes consistently, you have a private dataset for fine-tuning your own Coder model. That dataset becomes the moat. Without the eval harness from day one, you can't build it.</p>
+
+      <h2>What goes wrong (and how to avoid)</h2>
+
+      <h3>Pitfall 1: The eval suite drifts</h3>
+      <p>Engineer changes a ticket because "it was unfair anyway". Now the regression bar is whatever the engineer thought it should be that day. <strong>Fix:</strong> tickets are append-only. New tickets fine; existing tickets frozen. Versioned in git, signed by reviewer.</p>
+
+      <h3>Pitfall 2: LLM-as-judge cheats itself</h3>
+      <p>If the same model that wrote the diff is the one scoring it, you'll get inflated scores. <strong>Fix:</strong> use a <em>different</em> model family for the Critic (we use Sonnet for review on diffs written by GPT-4o). Even better: use 2 critics and average.</p>
+
+      <h3>Pitfall 3: All tickets are easy</h3>
+      <p>Easy tickets pass on a coin flip. Real signal lives in the hard ones. <strong>Fix:</strong> 30% easy / 50% medium / 20% hard. The hard ones decide whether you ship.</p>
+
+      <h3>Pitfall 4: Everyone forgets to run it</h3>
+      <p><strong>Fix:</strong> CI gate. The eval is in the merge requirements. PR can't merge without it. No human discipline required.</p>
+
+      <h2>The 5-ticket starter set</h2>
+      <p>If you're building anything agentic, copy this set:</p>
+      <ol>
+        <li><strong>Easy:</strong> Add a health-check endpoint with tests</li>
+        <li><strong>Medium:</strong> Add rate limiting middleware</li>
+        <li><strong>Medium:</strong> Refactor logging to structured JSON</li>
+        <li><strong>Medium:</strong> Add cursor-based pagination</li>
+        <li><strong>Hard:</strong> Detect + fix N+1, regression-test query count</li>
+      </ol>
+      <p>You can <a href="https://github.com/lexusthunder/aureum-ai-portfolio/blob/main/07_Autonomous_AI_Platform/aureum-genesis/eval/tickets.yaml" target="_blank">see the full YAML in the Genesis repo</a>. Steal it.</p>
+
+      <h2>The bigger pattern</h2>
+      <p>Every category-defining AI company has a private eval set. Anthropic has theirs. OpenAI has theirs. Cognition Labs has theirs. The pattern is universal: <strong>the eval harness is the artefact you guard most carefully</strong>, because it's the only thing that converts "the model felt better today" into "we measurably shipped a better product on Tuesday at 14:30".</p>
+
+      <p>If you're not running an eval gate on prompt changes, you're not yet doing AI engineering. You're doing AI gambling.</p>
+
+      <hr>
+
+      <p>If you're building an eval harness for your AI product and want to swap notes — <a href="mailto:urecheionelalexandru@gmail.com">email me</a>. Best part of my week.</p>
+    </div>
+
+    <footer class="post-footer">
+      <p><strong>Liked this?</strong> Subscribe via <a href="../feed.xml">RSS</a> · share via <a href="#" onclick="navigator.clipboard.writeText(location.href);return false;">copy link</a> · or email me at <a href="mailto:urecheionelalexandru@gmail.com">urecheionelalexandru@gmail.com</a>.</p>
+      <p style="margin-top:24px"><a href="/aureum-ai-portfolio/blog/" class="back">← All posts</a></p>
+    </footer>
+  </div>
+</article>
+</body>
+</html>

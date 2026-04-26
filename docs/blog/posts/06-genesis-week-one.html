@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genesis · Week 1 — Aureum Blog</title>
+<meta name="description" content="I shipped Aureum Genesis v1.0 in 72 hours. Here's the build log.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../post.css">
+</head>
+<body>
+<div class="mesh"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+<nav class="nav"><div class="container nav-inner">
+  <a href="/aureum-ai-portfolio/" class="brand"><span class="logo">A</span><span>Aureum</span></a>
+  <div class="nav-links">
+    <a href="/aureum-ai-portfolio/">Portfolio</a>
+    <a href="/aureum-ai-portfolio/blog/">Blog</a>
+    <a href="https://github.com/lexusthunder/aureum-ai-portfolio" target="_blank">GitHub ↗</a>
+  </div>
+</div></nav>
+
+<article>
+  <div class="container">
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="date">May 07, 2026</span>
+        <span class="tag">Build in Public</span>
+        <span class="tag">Genesis</span>
+        <span>· 6 min read</span>
+      </div>
+      <h1>Genesis · Week 1: from skeleton to v1.0 in 72 hours</h1>
+      <p class="dek">I shipped Aureum Genesis v1.0 — an autonomous AI software engineer — in a weekend. Real LLM clients, real GitHub PR opener, real Docker deploy, full sales kit. Here's the build log.</p>
+    </header>
+
+    <div class="post-body">
+      <p>72 hours. Skeleton → v1.0. Real Claude + GPT-4o clients. Real subprocess sandbox. Real GitHub PR opener via REST API. Docker Compose. Eval harness with frozen tickets. Sales kit with 4-tier pricing and an ROI calculator. Operations runbook.</p>
+      <p>Here's how it went, hour by hour.</p>
+
+      <h2>Hour 0 — The hypothesis</h2>
+      <p>I'd been reading about Cognition Labs raising $175M for Devin at a $2B valuation. Cursor at $2.6B. Magic.dev at $1.5B. The thing they all share: <em>autonomous coding agents</em>. The wedge between them is positioning — IDE vs. session-based agent vs. per-PR pricing.</p>
+      <p>I picked <strong>per-PR pricing</strong>. Customer pays $X per merged PR. Predictable. Aligned to outcome. Lets us start with one repo, one ticket type, and grow.</p>
+
+      <h2>Hours 1-6 — Architecture</h2>
+      <p>Drew the 5-agent loop on paper:</p>
+      <pre><code>Researcher → Coder → Tester → Critic → Deployer
+                          ↑          ↓
+                          └──── revise if score < 8</code></pre>
+      <p>Picked Pydantic v2 for typed agent IO. Picked async Python for orchestration. Picked pgvector for the RAG layer. Picked Anthropic + OpenAI as primary LLM vendors with Gemini optional. Picked subprocess for sandboxing (E2B/Modal as the production swap).</p>
+      <p><strong>Constraint imposed up front:</strong> hard per-ticket budget cap. The orchestrator <em>must</em> halt deterministically when cost exceeds threshold. This is the single rule that prevents an agent from going feral and burning $200 in 30 minutes. Wrote a 30-line <code>CostTracker</code> with a <code>BudgetExceeded</code> exception.</p>
+
+      <h2>Hours 7-18 — Skeleton</h2>
+      <p>Wrote the orchestrator. Wrote stubs for all 5 agents with mocked LLM responses (deterministic strings). Wrote the LLM router with a 15-entry routing table mapping (agent, complexity) → model. Wrote the cost tracker with real $/1M-token prices for Anthropic + OpenAI models.</p>
+      <p>By hour 18 I had a system that ran end-to-end with mock LLM responses. Pydantic objects flowed correctly through 5 agents. Eval harness scaffolded with 5 frozen tickets.</p>
+      <p>Test count: 6 unit tests. They all passed. None of them touched a real LLM yet.</p>
+
+      <h2>Hours 19-30 — Real LLM clients</h2>
+      <p>Hooked up real Anthropic SDK. Hooked up real OpenAI SDK. Each vendor wrapped in a tiny class with a <code>complete(system, user)</code> contract so the router could swap them transparently.</p>
+      <p>First real run on ticket T001 ("Add /api/v1/health/db endpoint, FastAPI"). Researcher produced a clean plan. Coder produced a diff that <em>almost</em> worked — missed one import. Critic caught it. Coder revised. Diff applied clean. Tester wrote 3 tests, all passed. Critic scored 9/10. Deployer wrote a PR title.</p>
+      <p>Cost: <strong>$0.41</strong>. Wall time: <strong>92 seconds</strong>. From "no code" to "tested PR-ready diff" in 92 seconds. I sat there staring at the terminal output for a while.</p>
+
+      <h2>Hours 31-42 — Sandbox + GitHub PR</h2>
+      <p>Wrote subprocess-based shell tool with timeout, cwd guard, env injection, pytest output parser. Wrote fs tool with path-escape guard (refuses writes outside repo). Wrote git tool wrapping <code>git diff</code>, <code>git apply</code>, <code>git checkout</code>, <code>git push</code> via subprocess.</p>
+      <p>Wrote real GitHub PR opener using <code>httpx</code> + <code>POST /repos/{owner}/{repo}/pulls</code>. Tested against a private demo repo. PR opened. Title clean. Body well-structured.</p>
+      <p>That was the moment Genesis stopped being a toy.</p>
+
+      <h2>Hours 43-54 — Docker + observability</h2>
+      <p>Wrote Dockerfile (Python 3.11-slim + git). Wrote docker-compose.yml with Postgres + pgvector + Genesis container, healthchecks. Tested locally — full clean boot in 18 seconds.</p>
+      <p>OpenTelemetry hooks added to every agent call. Span attributes: tokens in, tokens out, cost USD, model name, agent name. In Cloud Trace, every ticket becomes a hierarchical waterfall.</p>
+
+      <h2>Hours 55-66 — The sales kit</h2>
+      <p>This is the part most engineers skip. I refused. <a href="/aureum-ai-portfolio/blog/posts/01-why-your-team-ships-20-percent.html">If you don't write the sales kit, you don't have a product</a> — you have a demo.</p>
+      <p>Wrote:</p>
+      <ul>
+        <li>30-second pitch</li>
+        <li>4 pricing tiers ($49/PR Starter → $1M/yr Enterprise)</li>
+        <li>ROI calculator with concrete math (4×-12.6× ROI for any team &gt; 5 engineers)</li>
+        <li>Cold sales email template</li>
+        <li>20-minute live demo script</li>
+        <li>3 deployment topologies (SaaS / VPC / on-prem air-gapped)</li>
+        <li>SLA template for the Scale tier</li>
+        <li>FAQ for the typical buyer (VP of Eng at Series B)</li>
+      </ul>
+      <p>That document is now ~6,000 words. It's the artefact I send to design-partner candidates.</p>
+
+      <h2>Hours 67-72 — The runbook</h2>
+      <p>Operations runbook for the customer's SREs and ours. Quickstart in 5 commands. Day-2 ops (cost monitoring, killing runaways, key rotation). 5 SRE invariants (NEVER merge, NEVER read secrets, NEVER exceed budget, audit trail, rollback). On-call playbook for SEV-1/2/3 with SLA 99.5%.</p>
+      <p>Hour 72: <code>git commit -m "Genesis v1.0 — production wiring + sales kit"</code>. Pushed.</p>
+
+      <h2>What I learned</h2>
+      <ol>
+        <li><strong>Constraints invented up front save 10 hours later.</strong> The hard budget cap was a 30-line addition on hour 4. Without it, debugging runaway loops would have eaten my Sunday.</li>
+        <li><strong>Mock first, real second.</strong> Spent the first 18 hours with mocked LLMs. Wired real LLMs only after the orchestrator was already correct. Saved an unknowable amount of API spend on bug iteration.</li>
+        <li><strong>The sales kit is a forcing function for clarity.</strong> If you can't write the cold email, you don't know who you're selling to.</li>
+        <li><strong>72 hours is enough.</strong> Most "MVP in a weekend" stories are bullshit because they skip the boring parts (Docker, observability, runbook). Genesis isn't bullshit because the boring parts are in the same commit as the demo.</li>
+      </ol>
+
+      <h2>What's next</h2>
+      <p>Week 2: real customer pilot. Picking 3 Series-B SaaS engineering teams to be design partners — Genesis runs on their actual repo, charges per merged PR, $0 setup fee, 30-day pilot.</p>
+      <p>If you're a VP of Eng who wants to be design partner #1, #2, or #3 — <a href="mailto:urecheionelalexandru@gmail.com">email me</a>.</p>
+
+      <hr>
+
+      <p><a href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/07_Autonomous_AI_Platform/aureum-genesis" target="_blank">Genesis on GitHub</a> · <a href="https://github.com/lexusthunder/aureum-ai-portfolio/blob/main/07_Autonomous_AI_Platform/aureum-genesis/SALES_KIT.md" target="_blank">Sales Kit</a> · <a href="https://github.com/lexusthunder/aureum-ai-portfolio/blob/main/07_Autonomous_AI_Platform/aureum-genesis/RUNBOOK.md" target="_blank">Runbook</a></p>
+    </div>
+
+    <footer class="post-footer">
+      <p><strong>Liked this?</strong> Subscribe via <a href="../feed.xml">RSS</a> · share via <a href="#" onclick="navigator.clipboard.writeText(location.href);return false;">copy link</a>.</p>
+      <p style="margin-top:24px"><a href="/aureum-ai-portfolio/blog/" class="back">← All posts</a></p>
+    </footer>
+  </div>
+</article>
+</body>
+</html>

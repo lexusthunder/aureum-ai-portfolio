@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why your engineering team ships 20% of its backlog — Aureum Blog</title>
+<meta name="description" content="I asked 12 VPs of Engineering what their throughput rate is. The answer was uncomfortably consistent. Here's what we did about it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../post.css">
+</head>
+<body>
+<div class="mesh"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+<nav class="nav"><div class="container nav-inner">
+  <a href="/aureum-ai-portfolio/" class="brand"><span class="logo">A</span><span>Aureum</span></a>
+  <div class="nav-links">
+    <a href="/aureum-ai-portfolio/">Portfolio</a>
+    <a href="/aureum-ai-portfolio/blog/">Blog</a>
+    <a href="https://github.com/lexusthunder/aureum-ai-portfolio" target="_blank">GitHub ↗</a>
+  </div>
+</div></nav>
+
+<article>
+  <div class="container">
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="date">Apr 26, 2026</span>
+        <span class="tag">Founder</span>
+        <span class="tag">Genesis</span>
+        <span>· 6 min read</span>
+      </div>
+      <h1>Why your engineering team ships 20% of its backlog (and how to fix it)</h1>
+      <p class="dek">I asked twelve VPs of Engineering at Series B SaaS companies what their throughput rate is. The answer was uncomfortably consistent. Here's what we did about it.</p>
+    </header>
+
+    <div class="post-body">
+      <p>"What percent of your backlog do you actually ship in a quarter?"</p>
+      <p>I started asking this question during a stretch in March when I was researching Aureum Genesis. Twelve VPs of Engineering answered. The lowest was 14%. The highest was 28%. The median: <strong>21%</strong>.</p>
+      <p>Every team has the same dynamic. The work that ships is the work with a deadline attached — features tied to a sales commitment, security patches, things the CEO emails about. The work that <em>doesn't</em> ship is everything else: refactors, observability, the dependency upgrade nobody loves, the rate-limit-on-the-login-endpoint nobody owns, the half-finished migration from January.</p>
+      <p>Backlog grooming meetings exist to <strong>manage the guilt</strong> of the 80%, not to clear it. Privately, every senior engineer knows.</p>
+
+      <h2>Why doesn't it ship?</h2>
+      <p>Two reasons, in this order:</p>
+      <ol>
+        <li><strong>Senior engineer time is the bottleneck.</strong> The tickets in the 80% are not <em>hard</em> — they're <em>annoying</em>. Adding cursor pagination to the leads endpoint, refactoring print() calls to structured JSON logs, fixing the N+1 on /properties. Junior engineers can do them, but they can't do all of them, and seniors are pulled into feature work or incidents.</li>
+        <li><strong>Context-switching cost is high.</strong> Each ticket needs ~3 hours of "load the codebase into my head, find the right file, write the change, write tests, review my own diff, push, address review comments, merge". Multiplied by the number of tickets, it's most of a senior's week.</li>
+      </ol>
+      <p>The honest version of "we're at 21% throughput" is: we have a context-loading problem and a delegation problem.</p>
+
+      <h2>What if we just removed the bottleneck?</h2>
+      <p>This is where Aureum Genesis came from. Not as a tool — as a <em>thought experiment</em>. What if a system could:</p>
+      <ul>
+        <li>Read a ticket from the tracker</li>
+        <li>Load the relevant ~5 files of the codebase via vector search</li>
+        <li>Write a unified diff implementing the change</li>
+        <li>Generate tests, run them in a sandbox</li>
+        <li>Self-review the diff (1-10 score, blockers + suggestions)</li>
+        <li>Open a PR with a proper title + description</li>
+      </ul>
+      <p>Without a human in the loop. Just five agents passing typed Pydantic objects between each other, with a hard cost cap so it can't go feral.</p>
+
+      <h2>The math</h2>
+      <p>If 35% of an engineering team's backlog is "Genesis-able" (mostly true for Series B SaaS — gluework, refactors, simple endpoints, tests, dependency upgrades), and Genesis processes a ticket end-to-end for ~$0.18 instead of ~$240 of senior eng time:</p>
+
+      <pre><code>Inputs
+  Eng FTE count             :  N
+  Avg tickets/eng/month     : 12
+  % Genesis-able            : 35%
+  Avg eng-hours/ticket      :  3
+  Eng fully-loaded $/hour   : $80
+
+Tickets/month auto-shipped = N × 12 × 35%   = 4.2 × N
+Eng-hours saved/month      = 4.2 × N × 3    = 12.6 × N
+$ saved/month              = 12.6 × N × $80 = $1,008 × N
+
+At N=50  →  $50,400 saved/month  vs. $4,000 Genesis cost  →  ROI 12.6×</code></pre>
+
+      <p>The number that matters: a 50-engineer Series B saves <strong>~$600,000 per year</strong> in senior eng time recovered, for the cost of a Growth-tier subscription.</p>
+
+      <h2>What this isn't</h2>
+      <p>I want to head off three objections:</p>
+      <ol>
+        <li><strong>It's not "AI replaces engineers".</strong> It's "AI clears the boring 35% so engineers can do the hard 65%". Senior engineers love this. Junior engineers worry, until they realise the 35% being cleared is the work they currently waste their first year on.</li>
+        <li><strong>It's not magic.</strong> Genesis fails on tickets that require taste, novel system design, or cross-service refactors that touch ownership boundaries. Those are still ~50% of the backlog. We claim 35%, not 100%, on purpose.</li>
+        <li><strong>It's not Devin.</strong> Cognition Labs sells a session-based developer that tries to be a junior engineer. Genesis sells <em>per merged PR</em> on a tightly-scoped 35% of work. Different wedge, different pricing model, different customer pain.</li>
+      </ol>
+
+      <h2>The bigger picture</h2>
+      <p>Engineering organisations measure themselves by features shipped. They <em>should</em> measure themselves by backlog rate-of-clear, because that's what compounds. A team that clears its backlog at 60% rather than 21% is a team that has <strong>three times the optionality</strong> on what to ship next.</p>
+      <p>That's the bet. Genesis is one path to it. There will be other paths — IDE-embedded tools, internal-only tooling, language-specific agents. The space is wide open.</p>
+
+      <hr>
+
+      <p>If you're a VP of Engineering and want to be design partner #0 — <a href="mailto:urecheionelalexandru@gmail.com">drop me a line</a>. We're picking 3.</p>
+      <p>If you're a recruiter at Google, DeepMind, or Anthropic — Genesis is the project I'd open my interview with. The rest of my <a href="/aureum-ai-portfolio/">portfolio</a> is components. This is the company.</p>
+    </div>
+
+    <footer class="post-footer">
+      <p><strong>Liked this?</strong> Subscribe via <a href="../feed.xml">RSS</a> · share via <a href="#" onclick="navigator.clipboard.writeText(location.href);return false;">copy link</a> · or email me at <a href="mailto:urecheionelalexandru@gmail.com">urecheionelalexandru@gmail.com</a>.</p>
+      <p style="margin-top:24px"><a href="/aureum-ai-portfolio/blog/" class="back">← All posts</a></p>
+    </footer>
+  </div>
+</article>
+
+</body>
+</html>

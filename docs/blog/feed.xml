@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Aureum Blog</title>
+    <link>https://lexusthunder.github.io/aureum-ai-portfolio/blog/</link>
+    <description>Essays on autonomous AI agents, multi-vendor LLM routing, eval harnesses, and shipping production AI as a founder. By Ureche Ionel Alexandru (@lexusthunder).</description>
+    <language>en-us</language>
+    <atom:link href="https://lexusthunder.github.io/aureum-ai-portfolio/blog/feed.xml" rel="self" type="application/rss+xml"/>
+
+    <item>
+      <title>Why your engineering team ships 20% of its backlog (and how to fix it)</title>
+      <link>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/01-why-your-team-ships-20-percent.html</link>
+      <guid>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/01-why-your-team-ships-20-percent.html</guid>
+      <pubDate>Sun, 26 Apr 2026 14:00:00 GMT</pubDate>
+      <description>I asked 12 VPs of Engineering at Series B SaaS companies what their throughput rate is. The answer was uncomfortably consistent. Here's what we did about it.</description>
+    </item>
+
+    <item>
+      <title>How I cut Claude API costs 4.4× with a 15-line routing table</title>
+      <link>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/02-llm-routing-table.html</link>
+      <guid>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/02-llm-routing-table.html</guid>
+      <pubDate>Tue, 28 Apr 2026 14:00:00 GMT</pubDate>
+      <description>One claude-opus-4-6 everywhere is fine for a demo, lethal at scale. The fix: a routing table that maps (agent, complexity) to model.</description>
+    </item>
+
+    <item>
+      <title>The eval harness is the product</title>
+      <link>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/03-eval-harness-is-the-product.html</link>
+      <guid>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/03-eval-harness-is-the-product.html</guid>
+      <pubDate>Thu, 30 Apr 2026 14:00:00 GMT</pubDate>
+      <description>Without frozen tickets + golden outputs, prompt engineering becomes superstition. I run 50 tickets on every PR.</description>
+    </item>
+
+    <item>
+      <title>I wrote a neural network in NumPy. You should too.</title>
+      <link>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/04-numpy-neural-net.html</link>
+      <guid>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/04-numpy-neural-net.html</guid>
+      <pubDate>Sun, 03 May 2026 14:00:00 GMT</pubDate>
+      <description>Not for production. For interviews. For first principles. For the moment when a senior engineer asks what's actually happening on the backward pass.</description>
+    </item>
+
+    <item>
+      <title>From theology to AI engineering: the only pivot story that worked</title>
+      <link>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/05-from-theology-to-ai.html</link>
+      <guid>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/05-from-theology-to-ai.html</guid>
+      <pubDate>Tue, 05 May 2026 14:00:00 GMT</pubDate>
+      <description>I have a Bachelor's in Pastoral Theology. I'm applying to Google AI Engineer. Here's how I closed the credibility gap.</description>
+    </item>
+
+    <item>
+      <title>Genesis · Week 1: from skeleton to v1.0 in 72 hours</title>
+      <link>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/06-genesis-week-one.html</link>
+      <guid>https://lexusthunder.github.io/aureum-ai-portfolio/blog/posts/06-genesis-week-one.html</guid>
+      <pubDate>Thu, 07 May 2026 14:00:00 GMT</pubDate>
+      <description>I shipped Aureum Genesis v1.0 in 72 hours. Real LLM clients, real GitHub PR opener, real Docker deploy, full sales kit. Here's the build log.</description>
+    </item>
+  </channel>
+</rss>

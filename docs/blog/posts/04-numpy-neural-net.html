@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I wrote a neural network in NumPy. You should too. — Aureum Blog</title>
+<meta name="description" content="Not for production. For interviews. For first principles. For the moment when a senior engineer asks 'what's actually happening on the backward pass'.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../post.css">
+</head>
+<body>
+<div class="mesh"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+<nav class="nav"><div class="container nav-inner">
+  <a href="/aureum-ai-portfolio/" class="brand"><span class="logo">A</span><span>Aureum</span></a>
+  <div class="nav-links">
+    <a href="/aureum-ai-portfolio/">Portfolio</a>
+    <a href="/aureum-ai-portfolio/blog/">Blog</a>
+    <a href="https://github.com/lexusthunder/aureum-ai-portfolio" target="_blank">GitHub ↗</a>
+  </div>
+</div></nav>
+
+<article>
+  <div class="container">
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="date">May 03, 2026</span>
+        <span class="tag">Fundamentals</span>
+        <span class="tag">NumPy</span>
+        <span>· 9 min read</span>
+      </div>
+      <h1>I wrote a neural network in NumPy. You should too.</h1>
+      <p class="dek">Not for production. For interviews. For first principles. For the moment when a senior engineer asks "what's actually happening on the backward pass" and you can answer without reading the docs.</p>
+    </header>
+
+    <div class="post-body">
+      <p>The temptation, when learning ML, is to start with PyTorch. <code>torch.nn.Linear</code>, <code>.backward()</code>, an optimizer, a fit loop, and you're shipping in an afternoon.</p>
+      <p>I did this for a year. It worked. I built models. I deployed them. I won small Kaggle competitions.</p>
+      <p>Then a senior engineer at a Series A asked me, in a 1:1 on a take-home: "<em>What does <code>.backward()</code> actually compute?</em>"</p>
+      <p>I said something about gradients. He asked me to <strong>write it</strong>. Without PyTorch.</p>
+      <p>I couldn't. Not in 30 minutes. Not in 2 hours. I could write the forward pass — that's just matrix multiplication. The backward pass, I had only ever read about. I had never <em>derived</em> it.</p>
+      <p>I went home that weekend and wrote one.</p>
+
+      <h2>Why this matters more than you think</h2>
+      <p>Three reasons.</p>
+
+      <h3>1. Senior engineers test fundamentals</h3>
+      <p>Mid-level interviews ask you to use the framework. Senior interviews ask you to <em>be</em> the framework. The signal a senior is looking for: <em>can this person debug my training run when PyTorch's autograd does something surprising?</em></p>
+      <p>If you've never written backprop yourself, the answer is no. You'll google. The senior knows.</p>
+
+      <h3>2. It's a load-bearing piece of intuition</h3>
+      <p>Once you've written <code>dL/dW = X.T @ dL/dY</code> with your own hands, you understand why batch size affects gradient noise, why weight initialization matters, why ReLU dying is a real thing. Before that, those are facts you memorised. After, they're <em>obvious</em>.</p>
+
+      <h3>3. It de-risks LLMs for you</h3>
+      <p>If you can write a 2-layer NN in NumPy, then a transformer is just (a) more layers, (b) a fancy attention computation, (c) some normalisation. The entire LLM stack becomes legible.</p>
+
+      <h2>The exact code I wrote</h2>
+      <p>This is the heart of <a href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/04_Classic_ML/b2b-lead-scoring-api" target="_blank">b2b-lead-scoring-api</a> on my portfolio. ~80 lines, no deps but NumPy:</p>
+
+      <pre><code>import numpy as np
+
+class B2BLeadScoringModel:
+    """2-layer feedforward NN with sigmoid output, hand-written backprop."""
+
+    def __init__(self, n_features=5, n_hidden=8, lr=0.05, seed=42):
+        rng = np.random.default_rng(seed)
+        # He initialization for ReLU
+        self.W1 = rng.standard_normal((n_features, n_hidden)) * np.sqrt(2 / n_features)
+        self.b1 = np.zeros(n_hidden)
+        self.W2 = rng.standard_normal((n_hidden, 1)) * np.sqrt(2 / n_hidden)
+        self.b2 = np.zeros(1)
+        self.lr = lr
+
+    def _sigmoid(self, z):  # numerically stable
+        return np.where(z >= 0, 1 / (1 + np.exp(-z)), np.exp(z) / (1 + np.exp(z)))
+
+    def _relu(self, z):
+        return np.maximum(0, z)
+
+    def forward(self, X):
+        self.X = X
+        self.Z1 = X @ self.W1 + self.b1
+        self.A1 = self._relu(self.Z1)
+        self.Z2 = self.A1 @ self.W2 + self.b2
+        self.A2 = self._sigmoid(self.Z2)
+        return self.A2
+
+    def backward(self, y_true):
+        m = self.X.shape[0]
+        # Loss: binary cross-entropy
+        # dL/dZ2 for sigmoid + BCE simplifies to (A2 - y) / m
+        dZ2 = (self.A2 - y_true.reshape(-1, 1)) / m
+        dW2 = self.A1.T @ dZ2
+        db2 = dZ2.sum(axis=0)
+        dA1 = dZ2 @ self.W2.T
+        dZ1 = dA1 * (self.Z1 > 0)  # ReLU gradient
+        dW1 = self.X.T @ dZ1
+        db1 = dZ1.sum(axis=0)
+        # SGD update
+        self.W1 -= self.lr * dW1
+        self.b1 -= self.lr * db1
+        self.W2 -= self.lr * dW2
+        self.b2 -= self.lr * db2
+
+    def fit(self, X, y, epochs=2000):
+        for _ in range(epochs):
+            self.forward(X)
+            self.backward(y)
+        return self
+
+    def predict_proba(self, X):
+        return self.forward(X).ravel()</code></pre>
+
+      <h2>The three things to internalise</h2>
+
+      <h3>(1) The gradient of (sigmoid + BCE) is just (predicted − true)</h3>
+      <p>This is the magic moment. The math:</p>
+      <pre><code>L = -[y·log(σ(z)) + (1-y)·log(1-σ(z))]
+dL/dz = σ(z) − y
+      = predicted − target</code></pre>
+      <p>That's it. That's the entire reason logistic regression works the way it does. The output error <em>is</em> the gradient. There is no chain rule trick — sigmoid and BCE are designed to compose into this clean form.</p>
+
+      <h3>(2) The chain rule is just matrix multiplication, in reverse</h3>
+      <p>Forward: <code>Z1 = X @ W1</code>, <code>A1 = ReLU(Z1)</code>, <code>Z2 = A1 @ W2</code>, <code>A2 = sigmoid(Z2)</code>.</p>
+      <p>Backward (reverse the multiplications, transpose the matrices):</p>
+      <pre><code>dZ2 = A2 - y
+dW2 = A1.T @ dZ2     ← input was A1, so transpose A1
+dA1 = dZ2 @ W2.T     ← we want gradient w.r.t. A1, so transpose W2
+dZ1 = dA1 * (Z1 > 0) ← ReLU's gradient is 1 where Z>0, else 0
+dW1 = X.T @ dZ1      ← input was X, so transpose X</code></pre>
+      <p>If you stare at this until it clicks, you have <em>backprop</em> in your bones. Everything else (Adam, momentum, layer norm) is a refinement.</p>
+
+      <h3>(3) The whole thing trains in 50 lines of NumPy</h3>
+      <p>No autograd graph. No GPU. No batching machinery. Just `forward` and `backward` and a loop. <strong>This</strong> is the floor of what every ML library is doing under the hood.</p>
+
+      <h2>What to build to internalise this</h2>
+      <ol>
+        <li>Implement the snippet above on the <a href="https://archive.ics.uci.edu/dataset/53/iris">Iris</a> or <a href="https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data">Wisconsin breast cancer</a> dataset. ~95% accuracy. Should run in 30 seconds.</li>
+        <li>Add a third layer. Watch how the gradients chain.</li>
+        <li>Replace BCE with cross-entropy + softmax. Derive <code>dL/dZ</code> from scratch. (Spoiler: same form, <code>predicted − target</code>.)</li>
+        <li>Implement Adam from the paper. Two extra arrays per parameter (running average of gradient + running average of squared gradient).</li>
+      </ol>
+      <p>~3 hours of work. <strong>It will pay you back for the rest of your career.</strong></p>
+
+      <h2>The interview test</h2>
+      <p>Next time a senior asks "explain backprop", you don't quote a textbook. You ask for a whiteboard. You write the loss. You take the derivative. You match the matrix shapes. You explain why we transpose.</p>
+      <p>The senior smiles. You're hired.</p>
+
+      <hr>
+
+      <p>The <a href="https://github.com/lexusthunder/aureum-ai-portfolio/tree/main/04_Classic_ML/b2b-lead-scoring-api">full project</a> wraps this NN in a FastAPI service with API-key auth + tests. The math is the same; the wrapper is the production part.</p>
+    </div>
+
+    <footer class="post-footer">
+      <p><strong>Liked this?</strong> Subscribe via <a href="../feed.xml">RSS</a> · share via <a href="#" onclick="navigator.clipboard.writeText(location.href);return false;">copy link</a>.</p>
+      <p style="margin-top:24px"><a href="/aureum-ai-portfolio/blog/" class="back">← All posts</a></p>
+    </footer>
+  </div>
+</article>
+</body>
+</html>

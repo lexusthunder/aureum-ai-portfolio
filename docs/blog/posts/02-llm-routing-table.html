@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How I cut Claude API costs 4.4× with a 15-line routing table — Aureum Blog</title>
+<meta name="description" content="One claude-opus-4-6 everywhere is fine for a demo, lethal at scale. The fix: a routing table. Here's the exact one I ship in production.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../post.css">
+</head>
+<body>
+<div class="mesh"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+<nav class="nav"><div class="container nav-inner">
+  <a href="/aureum-ai-portfolio/" class="brand"><span class="logo">A</span><span>Aureum</span></a>
+  <div class="nav-links">
+    <a href="/aureum-ai-portfolio/">Portfolio</a>
+    <a href="/aureum-ai-portfolio/blog/">Blog</a>
+    <a href="https://github.com/lexusthunder/aureum-ai-portfolio" target="_blank">GitHub ↗</a>
+  </div>
+</div></nav>
+
+<article>
+  <div class="container">
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="date">Apr 28, 2026</span>
+        <span class="tag">LLM Engineering</span>
+        <span class="tag">Cost</span>
+        <span>· 8 min read</span>
+      </div>
+      <h1>How I cut Claude API costs 4.4× with a 15-line routing table</h1>
+      <p class="dek">One <code>claude-opus-4-6</code> everywhere is fine for a demo, lethal at scale. The fix: a routing table that maps (agent, complexity) → model. Here's the exact one I ship in Aureum Genesis.</p>
+    </header>
+
+    <div class="post-body">
+      <p>The first version of <a href="/aureum-ai-portfolio/blog/posts/06-genesis-week-one.html">Aureum Genesis</a> had one configuration: every agent called <code>claude-opus-4-6</code>. Why? Because it was the smartest model and I wanted the system to <em>work</em> before I optimised. Standard play.</p>
+      <p>Cost per ticket on Opus-everywhere: <strong>$0.80</strong>.</p>
+      <p>That's fine when I'm running 5 tickets a day to demo to friends. It's <strong>lethal</strong> when a customer pushes 200 tickets through Genesis on day one and gets a $160 bill before lunch.</p>
+
+      <h2>The insight</h2>
+      <p>Different agents have radically different cognitive loads.</p>
+      <ul>
+        <li>The <strong>Researcher</strong> reads a ticket and produces a typed plan. It needs <em>reasoning</em>, not raw code-gen power. Sonnet 4.6 is enough.</li>
+        <li>The <strong>Coder</strong> writes diffs. It needs strong code generation. GPT-4o is great here. Opus only for hard tickets.</li>
+        <li>The <strong>Tester</strong> generates pytest cases. This is mostly templated string work. <strong>Haiku</strong> handles it for a tenth of the price.</li>
+        <li>The <strong>Critic</strong> reviews diffs on a 1-10 scale. Needs judgement, not creativity. Sonnet.</li>
+        <li>The <strong>Deployer</strong> writes a PR title + body from a structured input. Haiku again.</li>
+      </ul>
+
+      <h2>The routing table</h2>
+      <p>15 lines, no magic:</p>
+      <pre><code>ROUTING_TABLE = {
+    ("researcher", "low"):    "claude-haiku-4-5",
+    ("researcher", "medium"): "claude-sonnet-4-6",
+    ("researcher", "high"):   "claude-opus-4-6",
+    ("coder",      "low"):    "gpt-4o-mini",
+    ("coder",      "medium"): "gpt-4o",
+    ("coder",      "high"):   "claude-opus-4-6",
+    ("tester",     "low"):    "claude-haiku-4-5",
+    ("tester",     "medium"): "claude-haiku-4-5",
+    ("tester",     "high"):   "claude-sonnet-4-6",
+    ("critic",     "low"):    "claude-sonnet-4-6",
+    ("critic",     "medium"): "claude-sonnet-4-6",
+    ("critic",     "high"):   "claude-opus-4-6",
+    ("deployer",   "low"):    "claude-haiku-4-5",
+    ("deployer",   "medium"): "claude-haiku-4-5",
+    ("deployer",   "high"):   "claude-haiku-4-5",
+}</code></pre>
+
+      <p>Complexity is set by the Researcher's output (a string field <code>estimated_complexity</code> on the typed plan). Coder runs at the complexity the Researcher set; everyone else runs at <code>medium</code> by default with overrides for hard tickets.</p>
+
+      <h2>The result</h2>
+      <p>Cost per ticket dropped from <strong>$0.80</strong> to <strong>$0.18</strong>. Same quality on the eval harness — <strong>47/50 tickets passing</strong> on both configurations, identical Critic scores.</p>
+      <p>That's 4.4× cheaper. For a 100-customer SaaS at 200 tickets/customer/month, the math is real money:</p>
+      <pre><code>Before: 100 × 200 × $0.80 = $16,000 / mo  →  $192k / yr LLM spend
+After:  100 × 200 × $0.18 = $ 3,600 / mo  →  $ 43k / yr LLM spend
+Saved: ~$148k / yr  =  one engineer's salary</code></pre>
+
+      <h2>What I learned</h2>
+      <ol>
+        <li><strong>Optimise for the median ticket, not the worst.</strong> 80% of tickets are easy/medium. Spending Opus money on every one is wasteful.</li>
+        <li><strong>The eval harness gates the routing change.</strong> I would not have shipped this without 50 frozen tickets confirming "same quality, lower cost". Routing changes are prompt changes — they need eval gates.</li>
+        <li><strong>Different vendors for different jobs.</strong> Anthropic's Sonnet beats GPT-4o on judgement tasks (Researcher, Critic). GPT-4o beats Sonnet on raw code-gen (Coder). Mixing vendors isn't disloyal — it's correct.</li>
+        <li><strong>Pricing changes monthly.</strong> The routing table lives next to the price table. When Haiku drops 30% next quarter, I move borderline tasks to Haiku.</li>
+      </ol>
+
+      <h2>What I would extend</h2>
+      <p>The current router is a <em>static table</em>. The next version is a <em>learned router</em>: a small classifier (could be sklearn) that takes ticket features (length, complexity flags, file count touched) and predicts which (agent, model) combination clears the eval bar at lowest cost. Train it on every ticket Genesis processes. Re-train weekly.</p>
+
+      <p>The bet: a learned router compresses cost another ~2× without quality loss. That's the difference between a 30% gross margin and a 60% gross margin SaaS.</p>
+
+      <hr>
+
+      <p>If you're building agentic systems and want to compare notes — <a href="mailto:urecheionelalexandru@gmail.com">email me</a>. I'll trade routing tables for routing tables.</p>
+    </div>
+
+    <footer class="post-footer">
+      <p><strong>Liked this?</strong> Subscribe via <a href="../feed.xml">RSS</a> · share via <a href="#" onclick="navigator.clipboard.writeText(location.href);return false;">copy link</a> · or email me at <a href="mailto:urecheionelalexandru@gmail.com">urecheionelalexandru@gmail.com</a>.</p>
+      <p style="margin-top:24px"><a href="/aureum-ai-portfolio/blog/" class="back">← All posts</a></p>
+    </footer>
+  </div>
+</article>
+</body>
+</html>

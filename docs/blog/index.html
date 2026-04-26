@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aureum Blog — Educating the AI engineering market</title>
+<meta name="description" content="Essays on autonomous AI agents, multi-vendor LLM routing, eval harnesses, and shipping production AI as a founder. New posts ~3× / week.">
+<link rel="alternate" type="application/rss+xml" title="Aureum Blog RSS" href="/aureum-ai-portfolio/blog/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#060608; --bg-card:#11131c; --border:rgba(255,255,255,0.06);
+    --text:#f5f5f7; --muted:#9ca3af; --dim:#6b7280;
+    --gold:#c9a227; --gold-bright:#f0d76b; --accent:#6366f1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:var(--gold-bright);text-decoration:none;transition:color .2s}
+  a:hover{color:var(--gold)}
+  .container{max-width:880px;margin:0 auto;padding:0 32px;position:relative;z-index:2}
+  .serif{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .mesh{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:.25;animation:float 24s ease-in-out infinite}
+  .blob-1{width:500px;height:500px;background:radial-gradient(circle,var(--accent),transparent 70%);top:-150px;left:-100px}
+  .blob-2{width:600px;height:600px;background:radial-gradient(circle,var(--gold),transparent 70%);top:30%;right:-200px;animation-delay:-8s}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,-50px) scale(1.1)}}
+
+  /* Navigation */
+  .nav{position:sticky;top:0;z-index:50;background:rgba(6,6,8,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:700}
+  .brand .logo{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--gold),var(--gold-bright));display:grid;place-items:center;color:#000;font-weight:900;font-size:14px}
+  .nav-links{display:flex;gap:24px;font-size:14px}
+  .nav-links a{color:var(--muted)} .nav-links a:hover{color:var(--text)}
+
+  /* Hero */
+  .hero{padding:80px 0 60px}
+  .eyebrow{color:var(--gold);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin-bottom:16px}
+  h1{font-size:clamp(40px,6vw,64px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:20px}
+  .lead{color:var(--muted);font-size:19px;max-width:640px;line-height:1.65}
+  .lead strong{color:var(--text)}
+
+  /* Post list */
+  .posts{padding:40px 0 100px}
+  .post-card{
+    padding:28px 0;border-bottom:1px solid var(--border);
+    transition:all .2s;display:block;color:inherit
+  }
+  .post-card:hover{padding-left:8px}
+  .post-meta{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:8px;flex-wrap:wrap}
+  .post-meta .date{color:var(--gold-bright)}
+  .post-meta .tag{padding:2px 9px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;font-size:11px}
+  .post-card h2{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.25;margin-bottom:10px;color:var(--text)}
+  .post-card:hover h2{color:var(--gold-bright)}
+  .post-card p{color:var(--muted);font-size:15px;line-height:1.6}
+  .post-card .read-more{font-size:13px;color:var(--gold-bright);font-weight:600;display:inline-block;margin-top:10px}
+  .post-card .read-more:after{content:' →';transition:transform .2s;display:inline-block}
+  .post-card:hover .read-more:after{transform:translateX(4px)}
+
+  /* CTA banner */
+  .cta-banner{
+    margin-top:80px;padding:36px;border-radius:20px;
+    background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(201,162,39,.05));
+    border:1px solid var(--border);text-align:center
+  }
+  .cta-banner h3{font-size:24px;font-weight:700;margin-bottom:10px}
+  .cta-banner p{color:var(--muted);margin-bottom:20px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;border:1px solid var(--gold);color:var(--gold-bright);background:transparent;transition:all .2s}
+  .btn:hover{background:var(--gold);color:#000}
+
+  footer{padding:60px 0 40px;border-top:1px solid var(--border);color:var(--dim);font-size:13px;text-align:center}
+  ::selection{background:var(--gold);color:#000}
+</style>
+</head>
+<body>
+
+<div class="mesh"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="/aureum-ai-portfolio/" class="brand"><span class="logo">A</span><span>Aureum</span></a>
+    <div class="nav-links">
+      <a href="/aureum-ai-portfolio/">Portfolio</a>
+      <a href="/aureum-ai-portfolio/blog/">Blog</a>
+      <a href="https://github.com/lexusthunder/aureum-ai-portfolio" target="_blank">GitHub ↗</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">Aureum Blog</div>
+    <h1>Educating the <span class="serif" style="color:var(--gold-bright)">AI engineering</span> market.</h1>
+    <p class="lead">Essays on autonomous AI agents, multi-vendor LLM routing, eval harnesses as product moats, and what it takes to ship production AI as a founder. New posts roughly <strong>3× per week</strong>.</p>
+  </div>
+</section>
+
+<section class="posts">
+  <div class="container">
+
+    <a href="/aureum-ai-portfolio/blog/posts/01-why-your-team-ships-20-percent.html" class="post-card">
+      <div class="post-meta">
+        <span class="date">Apr 26, 2026</span>
+        <span class="tag">Founder</span>
+        <span class="tag">Genesis</span>
+        <span>· 6 min read</span>
+      </div>
+      <h2>Why your engineering team ships 20% of its backlog (and how to fix it)</h2>
+      <p>I asked 12 VPs of Engineering at Series B SaaS companies what their throughput rate is. The answer was uncomfortably consistent. Here's what we did about it.</p>
+      <span class="read-more">Read</span>
+    </a>
+
+    <a href="/aureum-ai-portfolio/blog/posts/02-llm-routing-table.html" class="post-card">
+      <div class="post-meta">
+        <span class="date">Apr 28, 2026</span>
+        <span class="tag">LLM Engineering</span>
+        <span class="tag">Cost</span>
+        <span>· 8 min read</span>
+      </div>
+      <h2>How I cut Claude API costs 4.4× with a 15-line routing table</h2>
+      <p>One <code style="color:var(--gold-bright)">claude-opus-4-6</code> everywhere is fine for a demo, lethal at scale. The fix: a routing table that maps (agent, complexity) → model. Here's the exact table I ship in production.</p>
+      <span class="read-more">Read</span>
+    </a>
+
+    <a href="/aureum-ai-portfolio/blog/posts/03-eval-harness-is-the-product.html" class="post-card">
+      <div class="post-meta">
+        <span class="date">Apr 30, 2026</span>
+        <span class="tag">MLOps</span>
+        <span class="tag">Genesis</span>
+        <span>· 7 min read</span>
+      </div>
+      <h2>The eval harness is the product</h2>
+      <p>Without frozen tickets + golden outputs, prompt engineering becomes superstition. I run 50 tickets on every PR. Here's what to put in yours.</p>
+      <span class="read-more">Read</span>
+    </a>
+
+    <a href="/aureum-ai-portfolio/blog/posts/04-numpy-neural-net.html" class="post-card">
+      <div class="post-meta">
+        <span class="date">May 03, 2026</span>
+        <span class="tag">Fundamentals</span>
+        <span class="tag">NumPy</span>
+        <span>· 9 min read</span>
+      </div>
+      <h2>I wrote a neural network in NumPy. You should too.</h2>
+      <p>Not for production. For interviews. For first principles. For the moment when a senior engineer asks "what's actually happening on the backward pass" and you can answer without reading the docs.</p>
+      <span class="read-more">Read</span>
+    </a>
+
+    <a href="/aureum-ai-portfolio/blog/posts/05-from-theology-to-ai.html" class="post-card">
+      <div class="post-meta">
+        <span class="date">May 05, 2026</span>
+        <span class="tag">Pivot</span>
+        <span class="tag">Career</span>
+        <span>· 5 min read</span>
+      </div>
+      <h2>From theology to AI engineering: the only pivot story that worked</h2>
+      <p>I have a Bachelor's in Pastoral Theology. I'm applying to Google AI Engineer. Here's exactly how I closed the credibility gap — and what I'd do differently if I started today.</p>
+      <span class="read-more">Read</span>
+    </a>
+
+    <a href="/aureum-ai-portfolio/blog/posts/06-genesis-week-one.html" class="post-card">
+      <div class="post-meta">
+        <span class="date">May 07, 2026</span>
+        <span class="tag">Build in Public</span>
+        <span class="tag">Genesis</span>
+        <span>· 6 min read</span>
+      </div>
+      <h2>Genesis · Week 1: from skeleton to v1.0 in 72 hours</h2>
+      <p>I shipped Aureum Genesis v1.0 — an autonomous AI software engineer — in a weekend. Real LLM clients, real GitHub PR opener, real Docker deploy, full sales kit. Here's the build log.</p>
+      <span class="read-more">Read</span>
+    </a>
+
+    <div class="cta-banner">
+      <h3 class="serif" style="font-style:normal;">More posts incoming.</h3>
+      <p>30 more outlines locked and loaded. Subscribe to the RSS feed or follow on GitHub to get notified.</p>
+      <a href="/aureum-ai-portfolio/blog/feed.xml" class="btn">📡 RSS feed</a>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="container">© 2026 Aureum · Ureche Ionel Alexandru · Built in Ireland · <a href="https://github.com/lexusthunder/aureum-ai-portfolio" target="_blank">github.com/lexusthunder/aureum-ai-portfolio</a></div>
+</footer>
+
+</body>
+</html>
