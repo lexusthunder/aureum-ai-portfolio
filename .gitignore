@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Secrets
+.env
+.env.local
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# ML / data
+*.pkl
+*.h5
+*.pt
+*.pth
+*.onnx
+mlruns/
+artifacts/
+logs/
+data/raw/
+data/processed/
+
+# Node
+node_modules/
+dist/
+build/
+.next/
+.expo/
+
+# DBs
+*.db
+*.sqlite
+*.sqlite3
+
+# macOS APFS atomic-write temp files
+.*.??????
+*.swp
+*.swo
+
+# Random binaries / installers
+ChatGPT Atlas Installer*
+*.webloc
+*.command
+Unknown*
+
+# Vite build cache
+vite.config.js.timestamp-*

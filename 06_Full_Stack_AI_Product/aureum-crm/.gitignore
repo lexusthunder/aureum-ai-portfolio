@@ -1,0 +1,10 @@
+.env
+*.env
+.env.*
+__pycache__/
+*.pyc
+aureum.db
+frontend/node_modules/
+frontend/dist/
+frontend/ios/
+frontend/android/

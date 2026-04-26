@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 393px; height: 852px;
+    background: #030712;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    color: #f9fafb;
+    overflow: hidden;
+  }
+  .header {
+    background: #111827;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 52px 16px 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo { width: 28px; height: 28px; background: #f59e0b; border-radius: 8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:12px; color:#000; }
+  .app-name { font-weight: 700; font-size: 15px; }
+  .content { padding: 16px; }
+  .greeting { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .greeting span { color: #f59e0b; }
+  .subtitle { color: #6b7280; font-size: 13px; margin-bottom: 16px; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat { background: #111827; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px; }
+  .stat-val { font-size: 22px; font-weight: 700; color: #fff; }
+  .stat-val.gold { color: #f59e0b; }
+  .stat-label { font-size: 11px; color: #6b7280; margin-top: 3px; }
+  .section-title { font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .lead { background: #111827; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 12px; display:flex; align-items:center; gap: 10px; margin-bottom: 8px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(245,158,11,0.2); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; color:#f59e0b; flex-shrink:0; }
+  .lead-name { font-size: 13px; font-weight: 600; }
+  .lead-budget { font-size: 11px; color: #6b7280; margin-top: 2px; }
+  .score { font-size: 18px; font-weight: 800; color: #34d399; margin-left:auto; }
+  .badge { display:inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight:600; }
+  .badge.qualified { background: rgba(52,211,153,0.15); color: #34d399; }
+  .badge.new { background: rgba(96,165,250,0.15); color: #60a5fa; }
+  .badge.proposal { background: rgba(167,139,250,0.15); color: #a78bfa; }
+  .pipeline { background: #111827; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px; margin-bottom: 16px; }
+  .pipeline-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .pipeline-bars { display: flex; gap: 6px; align-items: flex-end; height: 50px; }
+  .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .bar { width: 100%; border-radius: 4px 4px 0 0; background: #f59e0b; }
+  .bar-label { font-size: 9px; color: #6b7280; }
+  .bottom-bar { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(17,24,39,0.95); border-top: 1px solid rgba(255,255,255,0.08); display: flex; padding: 8px 0 28px; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .tab-icon { font-size: 20px; }
+  .tab-label { font-size: 10px; color: #6b7280; }
+  .tab.active .tab-label { color: #f59e0b; }
+  .tab-dot { width: 4px; height: 4px; border-radius: 50%; background: #f59e0b; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">A</div>
+    <span class="app-name">Aureum CRM</span>
+  </div>
+  <div class="content">
+    <div class="greeting">Good morning, <span>Alex</span> 👋</div>
+    <div class="subtitle">Sunday, 19 April 2026</div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-val gold">€2.84M</div>
+        <div class="stat-label">Pipeline Value</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">12</div>
+        <div class="stat-label">Active Deals</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">47</div>
+        <div class="stat-label">Total Leads</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val gold">18.5%</div>
+        <div class="stat-label">Conversion Rate</div>
+      </div>
+    </div>
+
+    <div class="pipeline">
+      <div class="pipeline-title">Deal Pipeline</div>
+      <div class="pipeline-bars">
+        <div class="bar-wrap"><div class="bar" style="height:18px; opacity:0.4"></div><div class="bar-label">Disc</div></div>
+        <div class="bar-wrap"><div class="bar" style="height:30px; opacity:0.6"></div><div class="bar-label">View</div></div>
+        <div class="bar-wrap"><div class="bar" style="height:40px; opacity:0.8"></div><div class="bar-label">Offer</div></div>
+        <div class="bar-wrap"><div class="bar" style="height:22px; opacity:0.7"></div><div class="bar-label">Nego</div></div>
+        <div class="bar-wrap"><div class="bar" style="height:50px;"></div><div class="bar-label">Legal</div></div>
+        <div class="bar-wrap"><div class="bar" style="height:35px; background:#34d399;"></div><div class="bar-label">Won</div></div>
+      </div>
+    </div>
+
+    <div class="section-title">Recent Leads</div>
+    <div class="lead">
+      <div class="avatar">LM</div>
+      <div>
+        <div class="lead-name">Liam Murphy <span class="badge qualified">qualified</span></div>
+        <div class="lead-budget">Budget: €650K</div>
+      </div>
+      <div class="score">87</div>
+    </div>
+    <div class="lead">
+      <div class="avatar">CW</div>
+      <div>
+        <div class="lead-name">Ciarán Walsh <span class="badge proposal">proposal</span></div>
+        <div class="lead-budget">Budget: €890K</div>
+      </div>
+      <div class="score">91</div>
+    </div>
+    <div class="lead">
+      <div class="avatar">AO</div>
+      <div>
+        <div class="lead-name">Aoife O'Brien <span class="badge new">new</span></div>
+        <div class="lead-budget">Budget: €420K</div>
+      </div>
+      <div class="score">72</div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="tab active">
+      <div class="tab-icon">⊞</div>
+      <div class="tab-label" style="color:#f59e0b">Dashboard</div>
+      <div class="tab-dot"></div>
+    </div>
+    <div class="tab">
+      <div class="tab-icon" style="opacity:0.5">👥</div>
+      <div class="tab-label">Leads</div>
+    </div>
+    <div class="tab">
+      <div class="tab-icon" style="opacity:0.5">🤝</div>
+      <div class="tab-label">Deals</div>
+    </div>
+    <div class="tab">
+      <div class="tab-icon" style="opacity:0.5">🏠</div>
+      <div class="tab-label">Properties</div>
+    </div>
+    <div class="tab">
+      <div class="tab-icon" style="opacity:0.5">☰</div>
+      <div class="tab-label">More</div>
+    </div>
+  </div>
+</body>
+</html>

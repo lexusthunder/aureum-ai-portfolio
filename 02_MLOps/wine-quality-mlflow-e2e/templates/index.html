@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wine Quality Predictor</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, sans-serif; background: #f4f6f9; color: #222; display: flex; justify-content: center; padding: 2rem; }
+        .card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); max-width: 560px; width: 100%; padding: 2rem; }
+        h1 { font-size: 1.5rem; margin-bottom: 0.25rem; color: #7b2d8b; }
+        p.subtitle { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1.25rem; }
+        label { font-size: 0.8rem; font-weight: 600; color: #444; display: block; margin-bottom: 2px; }
+        input[type=number] { width: 100%; border: 1px solid #ccc; border-radius: 6px; padding: 0.45rem 0.6rem; font-size: 0.95rem; }
+        input[type=number]:focus { outline: 2px solid #7b2d8b; border-color: transparent; }
+        button { margin-top: 1.5rem; width: 100%; padding: 0.7rem; background: #7b2d8b; color: #fff; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: background .2s; }
+        button:hover { background: #5e1f6d; }
+        #result { margin-top: 1rem; text-align: center; font-size: 1.2rem; font-weight: 700; color: #2e7d32; min-height: 1.5rem; }
+        #error { color: #c62828; font-size: 0.9rem; margin-top: 0.5rem; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Wine Quality Predictor</h1>
+    <p class="subtitle">Enter the physicochemical properties to predict wine quality (0–10).</p>
+    <form id="form">
+        <div class="grid">
+            <div><label>Fixed Acidity</label><input type="number" step="any" name="fixed acidity" value="7.4" required /></div>
+            <div><label>Volatile Acidity</label><input type="number" step="any" name="volatile acidity" value="0.70" required /></div>
+            <div><label>Citric Acid</label><input type="number" step="any" name="citric acid" value="0.00" required /></div>
+            <div><label>Residual Sugar</label><input type="number" step="any" name="residual sugar" value="1.9" required /></div>
+            <div><label>Chlorides</label><input type="number" step="any" name="chlorides" value="0.076" required /></div>
+            <div><label>Free SO₂</label><input type="number" step="any" name="free sulfur dioxide" value="11" required /></div>
+            <div><label>Total SO₂</label><input type="number" step="any" name="total sulfur dioxide" value="34" required /></div>
+            <div><label>Density</label><input type="number" step="any" name="density" value="0.9978" required /></div>
+            <div><label>pH</label><input type="number" step="any" name="pH" value="3.51" required /></div>
+            <div><label>Sulphates</label><input type="number" step="any" name="sulphates" value="0.56" required /></div>
+            <div><label>Alcohol (%)</label><input type="number" step="any" name="alcohol" value="9.4" required /></div>
+        </div>
+        <button type="submit">Predict Quality</button>
+    </form>
+    <div id="result"></div>
+    <div id="error"></div>
+</div>
+
+<script>
+    document.getElementById('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        document.getElementById('result').textContent = '';
+        document.getElementById('error').textContent = '';
+
+        const inputs = e.target.querySelectorAll('input[type=number]');
+        const payload = {};
+        inputs.forEach(inp => { payload[inp.name] = parseFloat(inp.value); });
+
+        try {
+            const resp = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const json = await resp.json();
+            if (resp.ok) {
+                document.getElementById('result').textContent = `Predicted Quality: ${json.prediction}`;
+            } else {
+                document.getElementById('error').textContent = json.error || 'Unknown error.';
+            }
+        } catch (err) {
+            document.getElementById('error').textContent = 'Request failed: ' + err.message;
+        }
+    });
+</script>
+</body>
+</html>
